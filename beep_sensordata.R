@@ -35,7 +35,7 @@ plot(d$time, d$weight, type = "l",
               as.POSIXct(paste(Sys.Date(), "23:59:59 CEST", sep = " "))),
      xlab = "Time of day", ylab = "Weight (kg)",
      xaxt = "n") # Day
-vline <- as.POSIXct(paste(Sys.Date(), substr(as.character(max(d$time)), start = 11, stop = 18)))
+vline <- as.POSIXct(paste(Sys.Date(), substr(as.character(max(d$time)), start = 11, stop = 18))) - 30*60
 abline(v = vline, col = "red", lty = 2)
 axis.POSIXct(1, at = as.POSIXct(paste(Sys.Date(), "00:00:01 CEST")) + 
                0:12*60*120, labels = c(seq(0, 24, by = 2)))
