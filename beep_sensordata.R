@@ -5,6 +5,7 @@ rm(list = ls())
 library(xlsx)
 library(httr)
 library(jsonlite)
+library(imputeTS)
 
 ## Gegevens voor API call, token: qlqPY9Lf8v3Bqff15ihl0lKWHKJKOvcmImeEfXePpvmmJrn3halP5p05DUIh
 setwd("/home/sander/Documents/personal/beekeeping/beep/beep_codes")
@@ -29,6 +30,15 @@ d$time <- as.POSIXct(d$time, format="%Y-%m-%dT%H:%M:%SZ", tz = "CEST")
 ## Omit all data before April 14th, 16:15 (no hive on base)
 d <- subset(d, d$time > "2023-04-14 16:15:00 CEST")
 
+## In case of missings, interpolate, but remove trailing NA's
+while(is.na(d$weight_kg[length(d$weight_kg)])) {
+  d <- d[-length(d$weight_kg) , ]
+}
+
+if(sum(is.na(d$weight_kg)) > 0) {
+  d$weight_kg <- na_interpolation(d$weight_kg)
+}
+  
 ## Weight sensor data, confined to this day
 plot(d$time, d$weight, type = "l",
      xlim = c(as.POSIXct(paste(Sys.Date(), "00:00:01 CEST", sep = " ")),
